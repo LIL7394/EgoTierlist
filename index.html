@@ -4,47 +4,41 @@
   <meta charset="UTF-8">
   <title>EgoTierlist</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase CDN -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
 </head>
 <body>
   <h1>EgoTierlist</h1>
 
-  <!-- Gamemode Buttons -->
-  <div id="gamemodes">
-    <button onclick="switchMode('sword')">Sword</button>
-    <button onclick="switchMode('axe')">Axe</button>
-    <button onclick="switchMode('nethpot')">Nethpot</button>
-    <button onclick="switchMode('diapot')">Diapot</button>
-    <button onclick="switchMode('uhc')">UHC</button>
-    <button onclick="switchMode('smp')">SMP</button>
-    <button onclick="switchMode('crystal')">Crystal</button>
-    <button onclick="switchMode('mace')">Mace</button>
-    <button onclick="switchMode('vanilla')">Vanilla</button>
-  </div>
+  <!-- Gamemode buttons will be injected by script.js -->
+  <div id="gamemode-buttons"></div>
 
-  <!-- Tier Boxes -->
+  <!-- Tier container -->
   <div id="tiers">
     <div class="tier" id="HT1"><h2>HT1</h2><div class="items" id="HT1-items"></div></div>
-    <div class="tier" id="HT2"><h2>HT2</h2><div class="items" id="HT2-items"></div></div>
-    <div class="tier" id="HT3"><h2>HT3</h2><div class="items" id="HT3-items"></div></div>
-    <div class="tier" id="HT4"><h2>HT4</h2><div class="items" id="HT4-items"></div></div>
-    <div class="tier" id="HT5"><h2>HT5</h2><div class="items" id="HT5-items"></div></div>
     <div class="tier" id="LT1"><h2>LT1</h2><div class="items" id="LT1-items"></div></div>
+    <div class="tier" id="HT2"><h2>HT2</h2><div class="items" id="HT2-items"></div></div>
     <div class="tier" id="LT2"><h2>LT2</h2><div class="items" id="LT2-items"></div></div>
+    <div class="tier" id="HT3"><h2>HT3</h2><div class="items" id="HT3-items"></div></div>
     <div class="tier" id="LT3"><h2>LT3</h2><div class="items" id="LT3-items"></div></div>
+    <div class="tier" id="HT4"><h2>HT4</h2><div class="items" id="HT4-items"></div></div>
     <div class="tier" id="LT4"><h2>LT4</h2><div class="items" id="LT4-items"></div></div>
+    <div class="tier" id="HT5"><h2>HT5</h2><div class="items" id="HT5-items"></div></div>
     <div class="tier" id="LT5"><h2>LT5</h2><div class="items" id="LT5-items"></div></div>
   </div>
 
-  <!-- Add Player -->
-  <input type="text" id="player-name" placeholder="Player Name">
-  <input type="number" id="player-points" placeholder="Points">
-  <button onclick="addPlayer()">Add Player</button>
+  <!-- Player input -->
+  <div id="player-input">
+    <input type="text" id="new-item" placeholder="Player Name">
+    <input type="number" id="new-points" placeholder="Points">
+    <button onclick="addItem()">Add Player</button>
+    <button onclick="saveTierList()">Save Current Mode</button>
+    <button onclick="loadTierList()">Load Current Mode</button>
+  </div>
 
-  <button onclick="saveTierList()">Save Current Mode</button>
-  <button onclick="loadTierList()">Load Current Mode</button>
-
+  <!-- Script -->
   <script src="script.js"></script>
 </body>
 </html>
