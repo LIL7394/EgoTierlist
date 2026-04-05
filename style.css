@@ -1,4 +1,3 @@
-/* Body and general styles */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #1e1e2f;
@@ -8,7 +7,6 @@ body {
   padding: 20px;
 }
 
-/* Page header */
 h1 {
   margin-bottom: 20px;
   font-size: 36px;
@@ -16,15 +14,33 @@ h1 {
   text-shadow: 2px 2px #000;
 }
 
-/* Tiers container */
+#gamemodes {
+  margin-bottom: 20px;
+}
+
+#gamemodes button {
+  padding: 8px 12px;
+  margin: 2px;
+  border-radius: 5px;
+  border: none;
+  background: #ffdd57;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#gamemodes button:hover {
+  background: #ffc107;
+}
+
 #tiers {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
   margin-bottom: 20px;
 }
 
-/* Individual tier boxes */
 .tier {
   background: #2b2b3f;
   border-radius: 10px;
@@ -37,7 +53,6 @@ h1 {
   box-shadow: 0 0 10px #000;
 }
 
-/* Tier headers */
 .tier h2 {
   margin: 0 0 10px 0;
   padding: 5px 10px;
@@ -48,11 +63,18 @@ h1 {
 }
 
 /* Tier colors */
-#S h2 { background: #ff4d4d; }
-#A h2 { background: #ff9f43; }
-#B h2 { background: #ffea61; color: #000; }
+#HT1 h2 { background: #ff4d4d; }
+#HT2 h2 { background: #ff6f61; }
+#HT3 h2 { background: #ff9f43; }
+#HT4 h2 { background: #ffd700; color:#000; }
+#HT5 h2 { background: #ffe97f; color:#000; }
 
-/* Items container */
+#LT1 h2 { background: #b0e0e6; color:#000; }
+#LT2 h2 { background: #87ceeb; color:#000; }
+#LT3 h2 { background: #4682b4; }
+#LT4 h2 { background: #4169e1; }
+#LT5 h2 { background: #00008b; }
+
 .items {
   flex: 1;
   width: 90%;
@@ -63,7 +85,6 @@ h1 {
   overflow-y: auto;
 }
 
-/* Draggable items */
 .item {
   background: #444;
   margin: 5px 0;
@@ -79,7 +100,6 @@ h1 {
   background: #666;
 }
 
-/* Input and buttons */
 #new-item {
   padding: 8px;
   width: 200px;
