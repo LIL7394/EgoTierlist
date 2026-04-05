@@ -1,5 +1,5 @@
 // =======================
-// Firebase configuration
+// Firebase setup
 // =======================
 const firebaseConfig = {
   apiKey: "AIzaSyBx53SCnYUsr4C_OJemMh11L_sYKL_RWf0",
@@ -10,29 +10,20 @@ const firebaseConfig = {
   messagingSenderId: "230727654744",
   appId: "1:230727654744:web:92ef0175baaa5d10c8592d"
 };
-
-// Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // =======================
-// Gamemodes setup
+// Gamemodes and tiers
 // =======================
-const gamemodes = ["Sword", "Crystal", "Diapot", "Parkour", "Bedwars", "Skyblock"];
-let currentMode = gamemodes[0];
+const gamemodes = ["Overall","Sword","Axe","Diapot","UHC","SMP","Vanilla","Nethpot","Mace"];
+let currentMode = "Overall";
+const tiers = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
 
 // =======================
-// Tier IDs
+// Inject gamemode buttons
 // =======================
-const tiers = ["HT1", "LT1", "HT2", "LT2", "HT3", "LT3", "HT4", "LT4", "HT5", "LT5"];
-
-// =======================
-// Initialize gamemode buttons
-// =======================
-const gamemodeContainer = document.createElement("div");
-gamemodeContainer.id = "gamemode-buttons";
-document.body.insertBefore(gamemodeContainer, document.getElementById("tiers"));
-
+const gamemodeContainer = document.getElementById("gamemode-buttons");
 gamemodes.forEach(mode => {
   const btn = document.createElement("button");
   btn.textContent = mode;
@@ -41,115 +32,101 @@ gamemodes.forEach(mode => {
 });
 
 // =======================
-// Add item to a tier
+// Add player
 // =======================
 function addItem() {
-  const input = document.getElementById("new-item");
-  const pointsInput = document.getElementById("new-points");
-  const val = input.value.trim();
-  const pts = pointsInput.value.trim();
-  if (!val) return alert("Enter a player name!");
-  if (!pts || isNaN(pts)) return alert("Enter valid points!");
+  const name = document.getElementById("new-item").value.trim();
+  const points = document.getElementById("new-points").value.trim();
+  if(!name) return alert("Enter player name");
+  if(!points || isNaN(points)) return alert("Enter valid points");
 
   const div = document.createElement("div");
   div.className = "item";
-  div.textContent = `${val} (${pts} pts)`;
+  div.textContent = `${name} (${points} pts)`;
   div.draggable = true;
   div.addEventListener("dragstart", dragStart);
-
-  document.getElementById("LT5-items").appendChild(div); // default new players go to lowest tier
-  input.value = "";
-  pointsInput.value = "";
+  document.getElementById("LT5-items").appendChild(div);
+  document.getElementById("new-item").value = "";
+  document.getElementById("new-points").value = "";
 }
 
 // =======================
-// Drag and Drop
+// Drag & Drop
 // =======================
-function dragStart(e) {
+function dragStart(e){
   e.dataTransfer.setData("text/plain", e.target.textContent);
   e.dataTransfer.setData("source-id", e.target.parentElement.id);
 }
 
-document.querySelectorAll(".items").forEach(container => {
-  container.addEventListener("dragover", e => e.preventDefault());
-  container.addEventListener("drop", e => {
+document.querySelectorAll(".items").forEach(container=>{
+  container.addEventListener("dragover", e=>e.preventDefault());
+  container.addEventListener("drop", e=>{
     e.preventDefault();
     const text = e.dataTransfer.getData("text/plain");
     const sourceId = e.dataTransfer.getData("source-id");
-    if (!text) return;
-
+    if(!text) return;
     const sourceContainer = document.getElementById(sourceId);
     const items = Array.from(sourceContainer.children);
-    const itemDiv = items.find(i => i.textContent === text);
-    if (itemDiv) sourceContainer.removeChild(itemDiv);
-
+    const itemDiv = items.find(i=>i.textContent===text);
+    if(itemDiv) sourceContainer.removeChild(itemDiv);
     const newDiv = document.createElement("div");
-    newDiv.className = "item";
-    newDiv.textContent = text;
-    newDiv.draggable = true;
+    newDiv.className="item";
+    newDiv.textContent=text;
+    newDiv.draggable=true;
     newDiv.addEventListener("dragstart", dragStart);
     e.currentTarget.appendChild(newDiv);
   });
 });
 
 // =======================
-// Save/Load per gamemode
+// Save / Load
 // =======================
-function saveTierList() {
-  const data = {};
-  tiers.forEach(t => {
-    const container = document.getElementById(t + "-items");
-    data[t] = Array.from(container.children).map(c => c.textContent);
+function saveTierList(){
+  const data={};
+  tiers.forEach(t=>{
+    const container = document.getElementById(t+"-items");
+    data[t]=Array.from(container.children).map(c=>c.textContent);
   });
-
-  db.ref("tiers/" + currentMode).set(data)
-    .then(() => alert(`Tierlist for ${currentMode} saved!`))
-    .catch(err => alert("Error: " + err));
+  db.ref("tiers/"+currentMode).set(data)
+    .then(()=>alert(`${currentMode} saved!`))
+    .catch(err=>alert("Error: "+err));
 }
 
-function loadTierList() {
-  db.ref("tiers/" + currentMode).get()
-    .then(snapshot => {
-      if (!snapshot.exists()) return;
+function loadTierList(){
+  db.ref("tiers/"+currentMode).get()
+    .then(snapshot=>{
+      if(!snapshot.exists()) return;
       const data = snapshot.val();
-      tiers.forEach(t => {
-        const container = document.getElementById(t + "-items");
-        container.innerHTML = "";
-        data[t].forEach(text => {
-          const div = document.createElement("div");
-          div.className = "item";
-          div.textContent = text;
-          div.draggable = true;
+      tiers.forEach(t=>{
+        const container = document.getElementById(t+"-items");
+        container.innerHTML="";
+        data[t].forEach(text=>{
+          const div=document.createElement("div");
+          div.className="item";
+          div.textContent=text;
+          div.draggable=true;
           div.addEventListener("dragstart", dragStart);
           container.appendChild(div);
         });
       });
-    })
-    .catch(err => console.error(err));
+    }).catch(err=>console.error(err));
 }
 
 // =======================
-// Switch Gamemode
+// Switch gamemode
 // =======================
-function switchMode(mode) {
-  currentMode = mode;
+function switchMode(mode){
+  currentMode=mode;
   loadTierList();
-  document.querySelectorAll("#gamemode-buttons button").forEach(btn => {
-    btn.style.background = (btn.textContent === mode) ? "#ffdd57" : "#444";
+  document.querySelectorAll("#gamemode-buttons button").forEach(btn=>{
+    btn.classList.toggle("active", btn.textContent===mode);
   });
 }
 
 // =======================
-// Auto-load default mode
+// Auto-load default
 // =======================
 window.onload = () => {
-  // Create points input
-  const pointsInput = document.createElement("input");
-  pointsInput.id = "new-points";
-  pointsInput.placeholder = "Points";
-  pointsInput.style.marginRight = "5px";
-  document.body.insertBefore(pointsInput, document.getElementById("new-item"));
-
   loadTierList();
   switchMode(currentMode);
 };
