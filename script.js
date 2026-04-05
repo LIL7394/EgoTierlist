@@ -1,116 +1,155 @@
-// Firebase config
+// =======================
+// Firebase configuration
+// =======================
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBx53SCnYUsr4C_OJemMh11L_sYKL_RWf0",
+  authDomain: "tierlist-7c74a.firebaseapp.com",
+  databaseURL: "https://tierlist-7c74a-default-rtdb.firebaseio.com",
+  projectId: "tierlist-7c74a",
+  storageBucket: "tierlist-7c74a.appspot.com",
+  messagingSenderId: "230727654744",
+  appId: "1:230727654744:web:92ef0175baaa5d10c8592d"
 };
+
+// Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let currentMode = 'sword';
+// =======================
+// Gamemodes setup
+// =======================
+const gamemodes = ["Sword", "Crystal", "Diapot", "Parkour", "Bedwars", "Skyblock"];
+let currentMode = gamemodes[0];
 
-// Switch Gamemode
-function switchMode(mode){
-  currentMode = mode;
-  document.querySelectorAll('#gamemodes button').forEach(b => b.classList.remove('active'));
-  document.querySelector(`#gamemodes button[onclick="switchMode('${mode}')"]`).classList.add('active');
-  loadTierList();
-}
+// =======================
+// Tier IDs
+// =======================
+const tiers = ["HT1", "LT1", "HT2", "LT2", "HT3", "LT3", "HT4", "LT4", "HT5", "LT5"];
 
-// Add Player
-function addPlayer(){
-  const name = document.getElementById('player-name').value.trim();
-  const points = parseInt(document.getElementById('player-points').value);
-  if(!name || isNaN(points)) return;
+// =======================
+// Initialize gamemode buttons
+// =======================
+const gamemodeContainer = document.createElement("div");
+gamemodeContainer.id = "gamemode-buttons";
+document.body.insertBefore(gamemodeContainer, document.getElementById("tiers"));
 
-  const tierId = assignTier(points);
-  const container = document.getElementById(`${tierId}-items`);
-  const div = document.createElement('div');
-  div.className = 'item';
-  div.innerHTML = `<span class="name">${name}</span><span class="points">${points}</span>`;
+gamemodes.forEach(mode => {
+  const btn = document.createElement("button");
+  btn.textContent = mode;
+  btn.onclick = () => switchMode(mode);
+  gamemodeContainer.appendChild(btn);
+});
+
+// =======================
+// Add item to a tier
+// =======================
+function addItem() {
+  const input = document.getElementById("new-item");
+  const pointsInput = document.getElementById("new-points");
+  const val = input.value.trim();
+  const pts = pointsInput.value.trim();
+  if (!val) return alert("Enter a player name!");
+  if (!pts || isNaN(pts)) return alert("Enter valid points!");
+
+  const div = document.createElement("div");
+  div.className = "item";
+  div.textContent = `${val} (${pts} pts)`;
   div.draggable = true;
-  div.addEventListener('dragstart', dragStart);
-  container.appendChild(div);
+  div.addEventListener("dragstart", dragStart);
 
-  document.getElementById('player-name').value = '';
-  document.getElementById('player-points').value = '';
+  document.getElementById("LT5-items").appendChild(div); // default new players go to lowest tier
+  input.value = "";
+  pointsInput.value = "";
 }
 
-// Assign Tier based on points
-function assignTier(points){
-  if(points >= 900) return 'HT1';
-  if(points >= 800) return 'HT2';
-  if(points >= 700) return 'HT3';
-  if(points >= 600) return 'HT4';
-  if(points >= 500) return 'HT5';
-  if(points >= 400) return 'LT1';
-  if(points >= 300) return 'LT2';
-  if(points >= 200) return 'LT3';
-  if(points >= 100) return 'LT4';
-  return 'LT5';
+// =======================
+// Drag and Drop
+// =======================
+function dragStart(e) {
+  e.dataTransfer.setData("text/plain", e.target.textContent);
+  e.dataTransfer.setData("source-id", e.target.parentElement.id);
 }
 
-// Drag & Drop
-function dragStart(e){
-  e.dataTransfer.setData('text/plain', e.target.querySelector('.name').textContent);
-  e.dataTransfer.setData('source-id', e.target.parentElement.id);
-}
-
-document.querySelectorAll('.items').forEach(container=>{
-  container.addEventListener('dragover', e=>e.preventDefault());
-  container.addEventListener('drop', e=>{
+document.querySelectorAll(".items").forEach(container => {
+  container.addEventListener("dragover", e => e.preventDefault());
+  container.addEventListener("drop", e => {
     e.preventDefault();
-    const text = e.dataTransfer.getData('text/plain');
-    const sourceId = e.dataTransfer.getData('source-id');
-    if(!text) return;
+    const text = e.dataTransfer.getData("text/plain");
+    const sourceId = e.dataTransfer.getData("source-id");
+    if (!text) return;
+
     const sourceContainer = document.getElementById(sourceId);
     const items = Array.from(sourceContainer.children);
-    const itemDiv = items.find(i => i.querySelector('.name').textContent === text);
-    if(itemDiv) sourceContainer.removeChild(itemDiv);
-    e.currentTarget.appendChild(itemDiv);
+    const itemDiv = items.find(i => i.textContent === text);
+    if (itemDiv) sourceContainer.removeChild(itemDiv);
+
+    const newDiv = document.createElement("div");
+    newDiv.className = "item";
+    newDiv.textContent = text;
+    newDiv.draggable = true;
+    newDiv.addEventListener("dragstart", dragStart);
+    e.currentTarget.appendChild(newDiv);
   });
 });
 
-// Save & Load per gamemode
-function saveTierList(){
+// =======================
+// Save/Load per gamemode
+// =======================
+function saveTierList() {
   const data = {};
-  const tiers = ['HT1','HT2','HT3','HT4','HT5','LT1','LT2','LT3','LT4','LT5'];
-  tiers.forEach(id=>{
-    const container = document.getElementById(`${id}-items`);
-    data[id] = Array.from(container.children).map(c=>({
-      name: c.querySelector('.name').textContent,
-      points: parseInt(c.querySelector('.points').textContent)
-    }));
+  tiers.forEach(t => {
+    const container = document.getElementById(t + "-items");
+    data[t] = Array.from(container.children).map(c => c.textContent);
   });
-  db.ref(`tierlists/${currentMode}`).set(data)
-    .then(()=>alert('Tierlist saved!'))
-    .catch(err=>alert('Error: '+err));
+
+  db.ref("tiers/" + currentMode).set(data)
+    .then(() => alert(`Tierlist for ${currentMode} saved!`))
+    .catch(err => alert("Error: " + err));
 }
 
-function loadTierList(){
-  const tiers = ['HT1','HT2','HT3','HT4','HT5','LT1','LT2','LT3','LT4','LT5'];
-  db.ref(`tierlists/${currentMode}`).get().then(snapshot=>{
-    if(!snapshot.exists()) return;
-    const data = snapshot.val();
-    tiers.forEach(id=>{
-      const container = document.getElementById(`${id}-items`);
-      container.innerHTML = '';
-      data[id].forEach(p=>{
-        const div = document.createElement('div');
-        div.className = 'item';
-        div.innerHTML = `<span class="name">${p.name}</span><span class="points">${p.points}</span>`;
-        div.draggable = true;
-        div.addEventListener('dragstart', dragStart);
-        container.appendChild(div);
+function loadTierList() {
+  db.ref("tiers/" + currentMode).get()
+    .then(snapshot => {
+      if (!snapshot.exists()) return;
+      const data = snapshot.val();
+      tiers.forEach(t => {
+        const container = document.getElementById(t + "-items");
+        container.innerHTML = "";
+        data[t].forEach(text => {
+          const div = document.createElement("div");
+          div.className = "item";
+          div.textContent = text;
+          div.draggable = true;
+          div.addEventListener("dragstart", dragStart);
+          container.appendChild(div);
+        });
       });
-    });
-  }).catch(err=>console.error(err));
+    })
+    .catch(err => console.error(err));
 }
 
-window.onload = ()=>{
-  switchMode('sword');
+// =======================
+// Switch Gamemode
+// =======================
+function switchMode(mode) {
+  currentMode = mode;
+  loadTierList();
+  document.querySelectorAll("#gamemode-buttons button").forEach(btn => {
+    btn.style.background = (btn.textContent === mode) ? "#ffdd57" : "#444";
+  });
 }
+
+// =======================
+// Auto-load default mode
+// =======================
+window.onload = () => {
+  // Create points input
+  const pointsInput = document.createElement("input");
+  pointsInput.id = "new-points";
+  pointsInput.placeholder = "Points";
+  pointsInput.style.marginRight = "5px";
+  document.body.insertBefore(pointsInput, document.getElementById("new-item"));
+
+  loadTierList();
+  switchMode(currentMode);
+};
