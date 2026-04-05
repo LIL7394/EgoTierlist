@@ -9,22 +9,31 @@ const firebaseConfig = {
   appId: "1:230727654744:web:92ef0175baaa5d10c8592d"
 };
 
+// Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// Add new item to B Tier by default
 function addItem() {
   const input = document.getElementById("new-item");
   const val = input.value.trim();
   if (!val) return;
-  const div = document.createElement("div");
-  div.className = "item";
-  div.textContent = val;
-  div.draggable = true;
-  div.addEventListener("dragstart", dragStart);
-  document.getElementById("B-items").appendChild(div);
+
+  createItem(val, "B-items");
   input.value = "";
 }
 
+// Create a draggable item inside a container
+function createItem(text, containerId) {
+  const div = document.createElement("div");
+  div.className = "item";
+  div.textContent = text;
+  div.draggable = true;
+  div.addEventListener("dragstart", dragStart);
+  document.getElementById(containerId).appendChild(div);
+}
+
+// Drag & Drop
 function dragStart(e) {
   e.dataTransfer.setData("text/plain", e.target.textContent);
   e.dataTransfer.setData("source-id", e.target.parentElement.id);
@@ -37,19 +46,17 @@ document.querySelectorAll(".items").forEach(container => {
     const text = e.dataTransfer.getData("text/plain");
     const sourceId = e.dataTransfer.getData("source-id");
     if (!text) return;
+
     const sourceContainer = document.getElementById(sourceId);
     const items = Array.from(sourceContainer.children);
     const itemDiv = items.find(i => i.textContent === text);
     if (itemDiv) sourceContainer.removeChild(itemDiv);
-    const newDiv = document.createElement("div");
-    newDiv.className = "item";
-    newDiv.textContent = text;
-    newDiv.draggable = true;
-    newDiv.addEventListener("dragstart", dragStart);
-    e.currentTarget.appendChild(newDiv);
+
+    createItem(text, container.id);
   });
 });
 
+// Save to Firebase
 function saveTierList() {
   const data = {};
   ["S-items", "A-items", "B-items"].forEach(id => {
@@ -61,6 +68,7 @@ function saveTierList() {
     .catch(err => alert("Error: " + err));
 }
 
+// Load from Firebase
 function loadTierList() {
   db.ref("tierlist").get().then(snapshot => {
     if (!snapshot.exists()) return;
@@ -68,16 +76,10 @@ function loadTierList() {
     ["S-items", "A-items", "B-items"].forEach(id => {
       const container = document.getElementById(id);
       container.innerHTML = "";
-      data[id].forEach(text => {
-        const div = document.createElement("div");
-        div.className = "item";
-        div.textContent = text;
-        div.draggable = true;
-        div.addEventListener("dragstart", dragStart);
-        container.appendChild(div);
-      });
+      data[id].forEach(text => createItem(text, id));
     });
   }).catch(err => console.error(err));
 }
 
+// Load tier list on page load
 window.onload = loadTierList;
