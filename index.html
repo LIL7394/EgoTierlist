@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tier List</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
+</head>
+<body>
+  <h1>Tier List</h1>
+
+  <div id="tiers">
+    <div class="tier" id="S"><h2>S Tier</h2><div class="items" id="S-items"></div></div>
+    <div class="tier" id="A"><h2>A Tier</h2><div class="items" id="A-items"></div></div>
+    <div class="tier" id="B"><h2>B Tier</h2><div class="items" id="B-items"></div></div>
+  </div>
+
+  <input type="text" id="new-item" placeholder="Add a new item">
+  <button onclick="addItem()">Add Item</button>
+  <button onclick="saveTierList()">Save Tier List</button>
+  <button onclick="loadTierList()">Load Tier List</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
