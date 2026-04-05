@@ -1,3 +1,4 @@
+/* Body and general styles */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #1e1e2f;
@@ -7,6 +8,7 @@ body {
   padding: 20px;
 }
 
+/* Page header */
 h1 {
   margin-bottom: 20px;
   font-size: 36px;
@@ -14,6 +16,7 @@ h1 {
   text-shadow: 2px 2px #000;
 }
 
+/* Tiers container */
 #tiers {
   display: flex;
   justify-content: center;
@@ -21,6 +24,7 @@ h1 {
   margin-bottom: 20px;
 }
 
+/* Individual tier boxes */
 .tier {
   background: #2b2b3f;
   border-radius: 10px;
@@ -33,6 +37,7 @@ h1 {
   box-shadow: 0 0 10px #000;
 }
 
+/* Tier headers */
 .tier h2 {
   margin: 0 0 10px 0;
   padding: 5px 10px;
@@ -47,6 +52,7 @@ h1 {
 #A h2 { background: #ff9f43; }
 #B h2 { background: #ffea61; color: #000; }
 
+/* Items container */
 .items {
   flex: 1;
   width: 90%;
@@ -57,6 +63,7 @@ h1 {
   overflow-y: auto;
 }
 
+/* Draggable items */
 .item {
   background: #444;
   margin: 5px 0;
