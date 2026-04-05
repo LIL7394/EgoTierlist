@@ -10,12 +10,29 @@
 <body>
   <h1>Tier List</h1>
 
-  <div id="tiers">
-    <div class="tier" id="S"><h2>S Tier</h2><div class="items" id="S-items"></div></div>
-    <div class="tier" id="A"><h2>A Tier</h2><div class="items" id="A-items"></div></div>
-    <div class="tier" id="B"><h2>B Tier</h2><div class="items" id="B-items"></div></div>
+  <!-- Game mode buttons -->
+  <div id="gamemodes">
+    <button onclick="switchMode('sword')">Sword</button>
+    <button onclick="switchMode('diapot')">Diapot</button>
+    <button onclick="switchMode('crystal')">Crystal</button>
   </div>
 
+  <!-- Tier containers -->
+  <div id="tiers">
+    <div class="tier" id="HT1"><h2>HT1</h2><div class="items" id="HT1-items"></div></div>
+    <div class="tier" id="HT2"><h2>HT2</h2><div class="items" id="HT2-items"></div></div>
+    <div class="tier" id="HT3"><h2>HT3</h2><div class="items" id="HT3-items"></div></div>
+    <div class="tier" id="HT4"><h2>HT4</h2><div class="items" id="HT4-items"></div></div>
+    <div class="tier" id="HT5"><h2>HT5</h2><div class="items" id="HT5-items"></div></div>
+
+    <div class="tier" id="LT1"><h2>LT1</h2><div class="items" id="LT1-items"></div></div>
+    <div class="tier" id="LT2"><h2>LT2</h2><div class="items" id="LT2-items"></div></div>
+    <div class="tier" id="LT3"><h2>LT3</h2><div class="items" id="LT3-items"></div></div>
+    <div class="tier" id="LT4"><h2>LT4</h2><div class="items" id="LT4-items"></div></div>
+    <div class="tier" id="LT5"><h2>LT5</h2><div class="items" id="LT5-items"></div></div>
+  </div>
+
+  <!-- Input and buttons -->
   <input type="text" id="new-item" placeholder="Add a new item">
   <button onclick="addItem()">Add Item</button>
   <button onclick="saveTierList()">Save Tier List</button>
